@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOF → SNAP Centerline Converter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --navy: #0b1c2d;
+      --slate: #111827;
+      --accent: #38bdf8;
+      --gold: #facc15;
+    }
+  </style>
+</head>
+<body class="bg-[var(--navy)] text-gray-200 font-sans">
+
+  <!-- Hero -->
+  <section class="min-h-screen flex flex-col justify-center items-center text-center px-6">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white">TOF → SNAP Centerline Converter</h1>
+    <p class="max-w-3xl text-lg text-gray-300">
+      An automated pipeline for converting TOF-derived intracranial artery centerlines into SNAP-aligned centerlines using landmark-based affine registration.
+    </p>
+    <div class="mt-8 flex gap-4">
+      <a href="#tool" class="px-6 py-3 rounded-xl bg-[var(--accent)] text-black font-semibold hover:opacity-90">View Tool</a>
+      <a href="#research" class="px-6 py-3 rounded-xl border border-white/20 hover:bg-white/5">Research</a>
+    </div>
+  </section>
+
+  <!-- Tool Overview -->
+  <section id="tool" class="py-20 bg-[var(--slate)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-3xl font-bold mb-6 text-white">Desktop Application</h2>
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <p class="mb-4 text-gray-300">
+            This Python-based desktop application converts Time-of-Flight (TOF) artery centerlines into SNAP-aligned centerlines using shared vascular landmarks.
+          </p>
+          <ul class="space-y-2 text-gray-300">
+            <li>• Input TOF centerlines (YAML)</li>
+            <li>• Input TOF & SNAP landmark files</li>
+            <li>• Computes affine transformation</li>
+            <li>• Outputs SNAP-compatible centerlines</li>
+          </ul>
+        </div>
+        <div class="bg-black/40 rounded-xl p-6 text-sm font-mono text-gray-200 overflow-auto max-h-[400px]">
+<pre>TOF → SNAP Converter
+
+1. Select TOF centerline file
+2. Select TOF landmark file
+3. Select SNAP landmark file
+4. Click Convert
+
+Output:
+snap_affine_centerline.yaml</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Research Context -->
+  <section id="research" class="py-20">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-3xl font-bold mb-6 text-white">Research Context</h2>
+      <p class="text-gray-300 max-w-4xl mb-8">
+        Multicontrast MRA studies often require arterial centerlines across imaging modalities. TOF provides high spatial resolution, while SNAP highlights vessel wall characteristics but frequently omits distal vessels. Manual reconstruction across contrasts can exceed three hours per scan.
+      </p>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white/5 rounded-xl p-6">
+          <h3 class="font-semibold text-lg mb-2 text-[var(--gold)]">Motivation</h3>
+          <p class="text-gray-300 text-sm">Reduce manual labor by registering a single TOF-derived centerline into SNAP space.</p>
+        </div>
+        <div class="bg-white/5 rounded-xl p-6">
+          <h3 class="font-semibold text-lg mb-2 text-[var(--gold)]">Approach</h3>
+          <p class="text-gray-300 text-sm">Affine transformation using five vascular landmarks: BA, A1_L, A1_R, M1_L, M1_R.</p>
+        </div>
+        <div class="bg-white/5 rounded-xl p-6">
+          <h3 class="font-semibold text-lg mb-2 text-[var(--gold)]">Impact</h3>
+          <p class="text-gray-300 text-sm">Replicates manual modeling accuracy in under 5 minutes, enabling complete SNAP centerlines.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+      <!-- Media -->
+  <section class="py-20 bg-[var(--slate)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-3xl font-bold mb-10 text-white">Media</h2>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Video Thumbnail -->
+        <a href="https://www.youtube.com/watch?v=unzWOMUjui4" target="_blank"
+           class="group block bg-black/40 rounded-xl overflow-hidden hover:scale-[1.02] transition">
+          <img src="assets/tutorial_thumbnail.jpg" alt="Video tutorial thumbnail"
+               class="w-full h-64 object-cover group-hover:opacity-90" />
+          <div class="p-4">
+            <h3 class="text-lg font-semibold text-white">Video Tutorial</h3>
+            <p class="text-sm text-gray-400">Click to watch the full walkthrough on YouTube</p>
+          </div>
+        </a>
+
+        <!-- Abstract PDF Thumbnail -->
+        <a href="assets/ISMRM_Abstract_00541.pdf" target="_blank"
+           class="group block bg-black/40 rounded-xl overflow-hidden hover:scale-[1.02] transition">
+          <img src="assets/abstract_thumbnail.jpg" alt="ISMRM abstract thumbnail"
+               class="w-full h-64 object-cover group-hover:opacity-90" />
+          <div class="p-4">
+            <h3 class="text-lg font-semibold text-white">ISMRM Abstract #00541</h3>
+            <p class="text-sm text-gray-400">Click to open the full abstract (PDF)</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="py-20 bg-[var(--slate)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-3xl font-bold mb-6 text-white">Results</h2>
+      <p class="text-gray-300 max-w-4xl">
+        The affine registration achieves strong spatial agreement in central and proximal arteries, preserving topology and morphology. Minor deviations appear in highly tortuous distal vessels, but overall continuity remains intact. Processing time is reduced from ~3 hours to under 5 minutes per subject.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+    <!-- Results -->
+  <section class="py-20 bg-[var(--slate)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-3xl font-bold mb-6 text-white">Results</h2>
+      <p class="text-gray-300 max-w-4xl">
+        The affine registration achieves strong spatial agreement in central and proximal arteries, preserving topology and morphology. Minor deviations appear in highly tortuous distal vessels, but overall continuity remains intact. Processing time is reduced from ~3 hours to under 5 minutes per subject.
+      </p>
+    </div>
+  </section>
+
+  <footer class="py-10 text-center text-sm text-gray-400">
+    <p>© 2026 Abrar I. Uddin · University of Utah · ISMRM Abstract #00541</p>
+    <p class="mt-2">Contact: abrarihtiram@gmail.com</p>
+  </footer>
+
+</body>
+</html>
