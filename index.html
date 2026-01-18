@@ -48,7 +48,6 @@
       border-color: var(--accent);
     }
 
-    /* Subtle figure glow */
     .figure-card {
       position: relative;
       overflow: hidden;
@@ -77,6 +76,7 @@
       opacity: 0;
       transform: translateY(12px);
       transition: opacity 0.9s ease, transform 0.9s ease;
+      cursor: pointer;
     }
 
     .figure-card.visible img {
@@ -84,8 +84,33 @@
       transform: translateY(0);
     }
 
+    /* Modal for flowchart */
+    #flowchartModal {
+      transition: opacity 0.25s ease;
+    }
+
+    #flowchartModal.show {
+      opacity: 1;
+    }
+
+    /* Glow for modal */
+    #flowchartModal::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(56,189,248,0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: transform 0.15s ease;
+      z-index: 10;
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .reveal, .btn-lift, .media-icon, .figure-card, .figure-card img, .figure-card::before {
+      .reveal, .btn-lift, .media-icon, .figure-card, .figure-card img, .figure-card::before, #flowchartModal, #flowchartModal::before {
         animation: none !important;
         transition: none !important;
       }
@@ -151,7 +176,7 @@
         </p>
       </div>
 
-      <div class="bg-black/40 rounded-xl p-6 text-sm font-mono">
+      <div class="bg-black/40 rounded-xl p-6 text-sm font-mono overflow-x-auto break-words">
 <pre>Inputs:
 - TOF centerline (.yaml)
 - TOF landmarks (.yaml)
@@ -274,7 +299,7 @@ Output:
     </p>
 
     <div class="figure-card bg-black/40 rounded-xl p-6 inline-block reveal">
-      <img src="assets/figure1.png" alt="TOF-to-SNAP conversion flowchart" class="w-full rounded-md mb-4">
+      <img src="assets/figure1.png" alt="TOF-to-SNAP conversion flowchart" class="w-full rounded-md mb-4 flowchart-img">
       <h3 class="text-[var(--gold)] font-semibold mb-1">Flowchart</h3>
       <p class="text-gray-300 text-sm">Overall workflow of the TOF → SNAP centerline conversion process.</p>
     </div>
@@ -290,7 +315,7 @@ Output:
       Please cite this work if you use the tool or reference it in your research:
     </p>
 
-    <div class="bg-black/40 rounded-xl p-6 text-sm font-mono text-gray-200 leading-relaxed">
+    <div class="bg-black/40 rounded-xl p-6 text-sm font-mono text-gray-200 leading-relaxed overflow-x-auto break-words">
 <pre>
 Uddin, A. I., Ma, X., Ni, C. (2026). 
 Improving Multicontrast Arterial Centerline Alignment Between TOF and SNAP MRI 
@@ -309,6 +334,12 @@ University of Utah, Department of Radiology and Imaging Sciences.
   <p class="mt-2">Contact: abrarihtiram@gmail.com | 385-472-9574</p>
 </footer>
 
+<!-- ================= FLOWCHART MODAL ================= -->
+<div id="flowchartModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+  <span id="modalClose" class="absolute top-5 right-8 text-white text-3xl cursor-pointer">&times;</span>
+  <img id="modalImage" src="" alt="Enlarged Flowchart" class="max-h-[90vh] max-w-[90vw] rounded-xl shadow-xl transform scale-90 transition-transform duration-300">
+</div>
+
 <script>
   // Reveal on scroll
   const reveals = document.querySelectorAll('.reveal');
@@ -321,19 +352,44 @@ University of Utah, Department of Radiology and Imaging Sciences.
   }, { threshold: 0.15 });
   reveals.forEach(r => observer.observe(r));
 
-  // Figure mouse-following subtle glow
-  const figure = document.querySelector('.figure-card');
-  const glow = figure.querySelector('::before'); // pseudo-element handled in JS via transform
+  // Flowchart modal logic
+  const flowchartImg = document.querySelector('.flowchart-img');
+  const modal = document.getElementById('flowchartModal');
+  const modalImg = document.getElementById('modalImage');
+  const modalClose = document.getElementById('modalClose');
 
-  figure.addEventListener('mousemove', e => {
-    const rect = figure.getBoundingClientRect();
+  flowchartImg.addEventListener('click', () => {
+    modalImg.src = flowchartImg.src;
+    modal.classList.remove('pointer-events-none');
+    modal.classList.add('show');
+    modal.style.opacity = '1';
+    modalImg.classList.remove('scale-90');
+    modalImg.classList.add('scale-100');
+  });
+
+  const closeModal = () => {
+    modal.style.opacity = '0';
+    modal.classList.add('pointer-events-none');
+    modal.classList.remove('show');
+    modalImg.classList.remove('scale-100');
+    modalImg.classList.add('scale-90');
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Mouse-follow glow inside modal
+  modal.addEventListener('mousemove', e => {
+    const rect = modal.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const px = x / rect.width - 0.5;
-    const py = y / rect.height - 0.5;
-    figure.style.setProperty('--glow-x', `${px*100}px`);
-    figure.style.setProperty('--glow-y', `${py*100}px`);
-    figure.querySelector('::before')?.style?.setProperty('transform', `translate(${px*50}px, ${py*50}px)`);
+    const glow = modal.querySelector('::before');
+    const px = (x / rect.width - 0.5) * 100;
+    const py = (y / rect.height - 0.5) * 100;
+    modal.style.setProperty('--glow-x', `${px}px`);
+    modal.style.setProperty('--glow-y', `${py}px`);
   });
 </script>
 
