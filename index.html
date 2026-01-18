@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TOF → SNAP Centerline Converter</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
     :root {
       --navy: #0b1c2d;
@@ -12,134 +13,329 @@
       --accent: #38bdf8;
       --gold: #facc15;
     }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .btn-lift {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .btn-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .media-icon, .figure-card {
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      will-change: transform;
+    }
+
+    .media-icon:hover, .figure-card:hover {
+      transform: scale(1.03) rotateX(1deg);
+      border-color: var(--accent);
+    }
+
+    /* Subtle figure glow */
+    .figure-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .figure-card::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .figure-card img {
+      position: relative;
+      z-index: 1;
+      border-radius: 0.5rem;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .figure-card.visible img {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .btn-lift, .media-icon, .figure-card, .figure-card img, .figure-card::before {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
-<body class="bg-[var(--navy)] text-gray-200 font-sans">
 
-  <!-- Hero -->
-  <section class="min-h-screen flex flex-col justify-center items-center text-center px-6">
-    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white">TOF → SNAP Centerline Converter</h1>
-    <p class="max-w-3xl text-lg text-gray-300">
-      An automated pipeline for converting TOF-derived intracranial artery centerlines into SNAP-aligned centerlines using landmark-based affine registration.
-    </p>
-    <div class="mt-8 flex gap-4">
-      <a href="#tool" class="px-6 py-3 rounded-xl bg-[var(--accent)] text-black font-semibold hover:opacity-90">View Tool</a>
-      <a href="#research" class="px-6 py-3 rounded-xl border border-white/20 hover:bg-white/5">Research</a>
-    </div>
-  </section>
+<body class="bg-[var(--navy)] text-gray-200 font-sans overflow-x-hidden">
 
-  <!-- Tool Overview -->
-  <section id="tool" class="py-20 bg-[var(--slate)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold mb-6 text-white">Desktop Application</h2>
-      <div class="grid md:grid-cols-2 gap-10 items-center">
-        <div>
-          <p class="mb-4 text-gray-300">
-            This Python-based desktop application converts Time-of-Flight (TOF) artery centerlines into SNAP-aligned centerlines using shared vascular landmarks.
-          </p>
-          <ul class="space-y-2 text-gray-300">
-            <li>• Input TOF centerlines (YAML)</li>
-            <li>• Input TOF & SNAP landmark files</li>
-            <li>• Computes affine transformation</li>
-            <li>• Outputs SNAP-compatible centerlines</li>
-          </ul>
-        </div>
-        <div class="bg-black/40 rounded-xl p-6 text-sm font-mono text-gray-200 overflow-auto max-h-[400px]">
-<pre>TOF → SNAP Converter
+<!-- ================= HERO ================= -->
+<section class="min-h-screen flex flex-col justify-center items-center text-center px-6">
+  <h1 class="text-4xl md:text-5xl font-bold mb-5 text-white reveal">
+    TOF → SNAP Centerline Converter
+  </h1>
 
-1. Select TOF centerline file
-2. Select TOF landmark file
-3. Select SNAP landmark file
-4. Click Convert
+  <p class="max-w-3xl text-lg text-gray-300 reveal">
+    Automated landmark-based affine conversion of TOF-derived intracranial
+    artery centerlines into SNAP-aligned space.
+  </p>
+
+  <p class="mt-4 text-sm text-gray-400 reveal">
+    ISMRM Abstract #00541 · University of Utah
+  </p>
+
+  <div class="mt-12 flex gap-5 reveal flex-wrap justify-center">
+    <a href="#download" class="px-7 py-3 rounded-xl bg-[var(--accent)] text-black font-semibold btn-lift">
+      Download Tool
+    </a>
+    <a href="#research" class="px-7 py-3 rounded-xl border border-white/20 hover:bg-white/5 btn-lift">
+      Research
+    </a>
+    <a href="#figures" class="px-7 py-3 rounded-xl border border-white/20 hover:bg-white/5 btn-lift">
+      Flowchart
+    </a>
+  </div>
+</section>
+
+<!-- ================= DOWNLOAD ================= -->
+<section id="download" class="py-24 bg-[var(--slate)] reveal">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-3xl font-bold mb-6 text-white">Download</h2>
+    <div class="grid md:grid-cols-2 gap-10">
+      <div>
+        <p class="text-gray-300 mb-4">
+          Desktop application for converting TOF artery centerlines
+          into SNAP-aligned models using vascular landmarks.
+        </p>
+
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>• Platform: Windows</li>
+          <li>• Language: Python</li>
+          <li>• Output: VesselVoyager-compatible YAML</li>
+          <li>• Processing time: &lt; 5 minutes per subject</li>
+        </ul>
+
+        <a href="assets/tof_to_snap_app.exe" download
+           class="inline-block mt-6 px-6 py-3 bg-[var(--accent)] text-black font-semibold rounded-xl btn-lift">
+          Download v1.0
+        </a>
+
+        <p class="text-xs text-gray-400 mt-3">
+          For research use only. Not intended for clinical diagnosis.
+        </p>
+      </div>
+
+      <div class="bg-black/40 rounded-xl p-6 text-sm font-mono">
+<pre>Inputs:
+- TOF centerline (.yaml)
+- TOF landmarks (.yaml)
+- SNAP landmarks (.yaml)
 
 Output:
-snap_affine_centerline.yaml</pre>
-        </div>
+- snap_affine_centerline.yaml</pre>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Research Context -->
-  <section id="research" class="py-20">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold mb-6 text-white">Research Context</h2>
-      <p class="text-gray-300 max-w-4xl mb-8">
-        Multicontrast MRA studies often require arterial centerlines across imaging modalities. TOF provides high spatial resolution, while SNAP highlights vessel wall characteristics but frequently omits distal vessels. Manual reconstruction across contrasts can exceed three hours per scan.
-      </p>
+<!-- ================= PIPELINE ================= -->
+<section class="py-24 reveal">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl font-bold mb-10 text-white">How It Works</h2>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="bg-white/5 rounded-xl p-6">
-          <h3 class="font-semibold text-lg mb-2 text-[var(--gold)]">Motivation</h3>
-          <p class="text-gray-300 text-sm">Reduce manual labor by registering a single TOF-derived centerline into SNAP space.</p>
-        </div>
-        <div class="bg-white/5 rounded-xl p-6">
-          <h3 class="font-semibold text-lg mb-2 text-[var(--gold)]">Approach</h3>
-          <p class="text-gray-300 text-sm">Affine transformation using five vascular landmarks: BA, A1_L, A1_R, M1_L, M1_R.</p>
-        </div>
-        <div class="bg-white/5 rounded-xl p-6">
-          <h3 class="font-semibold text-lg mb-2 text-[var(--gold)]">Impact</h3>
-          <p class="text-gray-300 text-sm">Replicates manual modeling accuracy in under 5 minutes, enabling complete SNAP centerlines.</p>
-        </div>
+    <div class="grid md:grid-cols-4 gap-6 text-sm">
+      <div class="bg-white/5 rounded-xl p-6">
+        <h3 class="text-[var(--gold)] font-semibold mb-2">Landmarks</h3>
+        <p>Identify BA, A1_L, A1_R, M1_L, M1_R on TOF and SNAP MRAs.</p>
+      </div>
+
+      <div class="bg-white/5 rounded-xl p-6">
+        <h3 class="text-[var(--gold)] font-semibold mb-2">Affine Model</h3>
+        <p>Compute translation, rotation, scaling, and shear.</p>
+      </div>
+
+      <div class="bg-white/5 rounded-xl p-6">
+        <h3 class="text-[var(--gold)] font-semibold mb-2">Transformation</h3>
+        <p>Apply transformation to full TOF centerline.</p>
+      </div>
+
+      <div class="bg-white/5 rounded-xl p-6">
+        <h3 class="text-[var(--gold)] font-semibold mb-2">Output</h3>
+        <p>Generate SNAP-aligned centerline for visualization and analysis.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-      <!-- Media -->
-  <section class="py-20 bg-[var(--slate)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold mb-10 text-white">Media</h2>
+<!-- ================= RESEARCH ================= -->
+<section id="research" class="py-24 bg-[var(--slate)] reveal">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl font-bold mb-8 text-white">Research Context</h2>
 
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- Video Thumbnail -->
-        <a href="https://www.youtube.com/watch?v=unzWOMUjui4" target="_blank"
-           class="group block bg-black/40 rounded-xl overflow-hidden hover:scale-[1.02] transition">
-          <img src="assets/tutorial_thumbnail.jpg" alt="Video tutorial thumbnail"
-               class="w-full h-64 object-cover group-hover:opacity-90" />
-          <div class="p-4">
-            <h3 class="text-lg font-semibold text-white">Video Tutorial</h3>
-            <p class="text-sm text-gray-400">Click to watch the full walkthrough on YouTube</p>
-          </div>
-        </a>
+    <p class="text-gray-300 max-w-4xl mb-10">
+      Multicontrast MRA enables comprehensive cerebrovascular analysis but
+      requires accurate arterial centerlines across contrasts. TOF offers
+      high spatial resolution, while SNAP improves vessel wall visualization
+      but often omits distal branches.
+    </p>
 
-        <!-- Abstract PDF Thumbnail -->
-        <a href="assets/ISMRM_Abstract_00541.pdf" target="_blank"
-           class="group block bg-black/40 rounded-xl overflow-hidden hover:scale-[1.02] transition">
-          <img src="assets/abstract_thumbnail.jpg" alt="ISMRM abstract thumbnail"
-               class="w-full h-64 object-cover group-hover:opacity-90" />
-          <div class="p-4">
-            <h3 class="text-lg font-semibold text-white">ISMRM Abstract #00541</h3>
-            <p class="text-sm text-gray-400">Click to open the full abstract (PDF)</p>
-          </div>
-        </a>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white/5 rounded-xl p-6">
+        <h3 class="text-[var(--gold)] font-semibold mb-2">Motivation</h3>
+        <p class="text-sm">Manual centerline reconstruction exceeds three hours per scan.</p>
+      </div>
+
+      <div class="bg-white/5 rounded-xl p-6">
+        <h3 class="text-[var(--gold)] font-semibold mb-2">Results</h3>
+        <p class="text-sm">Automated conversion in under five minutes with preserved topology.</p>
+      </div>
+
+      <div class="bg-white/5 rounded-xl p-6">
+        <h3 class="text-[var(--gold)] font-semibold mb-2">Impact</h3>
+        <p class="text-sm">
+          Enables visualization of arteries frequently omitted in SNAP images.
+        </p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Results -->
-  <section class="py-20 bg-[var(--slate)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold mb-6 text-white">Results</h2>
-      <p class="text-gray-300 max-w-4xl">
-        The affine registration achieves strong spatial agreement in central and proximal arteries, preserving topology and morphology. Minor deviations appear in highly tortuous distal vessels, but overall continuity remains intact. Processing time is reduced from ~3 hours to under 5 minutes per subject.
-      </p>
+<!-- ================= MEDIA ================= -->
+<section class="py-24 reveal">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-16 text-white">Media & Resources</h2>
+
+    <div class="flex flex-col md:flex-row justify-center gap-20 flex-wrap">
+
+      <!-- Video -->
+      <a href="https://www.youtube.com/watch?v=unzWOMUjui4"
+         target="_blank" rel="noopener noreferrer"
+         class="media-icon bg-black/40 backdrop-blur rounded-3xl p-10 border border-white/10 btn-lift">
+
+        <img src="assets/video_thumbnail.png"
+             alt="Video tutorial"
+             class="w-24 mx-auto mb-5" />
+
+        <p class="text-sm text-gray-300 tracking-wide">
+          Video Tutorial
+        </p>
+      </a>
+
+      <!-- Abstract PDF -->
+      <a href="assets/ISMRM_Abstract_00541.pdf"
+         target="_blank" rel="noopener noreferrer"
+         class="media-icon bg-black/40 backdrop-blur rounded-3xl p-10 border border-white/10 btn-lift">
+
+        <img src="assets/abstract_thumbnail.jpg"
+             alt="ISMRM abstract"
+             class="w-24 mx-auto mb-5" />
+
+        <p class="text-sm text-gray-300 tracking-wide">
+          ISMRM Abstract #00541 (PDF)
+        </p>
+      </a>
+
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer -->
-    <!-- Results -->
-  <section class="py-20 bg-[var(--slate)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold mb-6 text-white">Results</h2>
-      <p class="text-gray-300 max-w-4xl">
-        The affine registration achieves strong spatial agreement in central and proximal arteries, preserving topology and morphology. Minor deviations appear in highly tortuous distal vessels, but overall continuity remains intact. Processing time is reduced from ~3 hours to under 5 minutes per subject.
-      </p>
+<!-- ================= FIGURE GALLERY ================= -->
+<section id="figures" class="py-24 reveal bg-[var(--slate)]">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-12 text-white">Flowchart</h2>
+    <p class="text-gray-300 mb-10 max-w-3xl mx-auto">
+      Flowchart of the TOF-to-SNAP MRA centerline conversion process. The diagram illustrates the steps used to generate the SNAP MRA centerline from a manually created TOF MRA model using a landmark-based affine transformation defined by the basilar artery (BA), left and right A1, and left and right M1 arterial landmarks.
+    </p>
+
+    <div class="figure-card bg-black/40 rounded-xl p-6 inline-block reveal">
+      <img src="assets/figure1.png" alt="TOF-to-SNAP conversion flowchart" class="w-full rounded-md mb-4">
+      <h3 class="text-[var(--gold)] font-semibold mb-1">Flowchart</h3>
+      <p class="text-gray-300 text-sm">Overall workflow of the TOF → SNAP centerline conversion process.</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <footer class="py-10 text-center text-sm text-gray-400">
-    <p>© 2026 Abrar I. Uddin · University of Utah · ISMRM Abstract #00541</p>
-    <p class="mt-2">Contact: abrarihtiram@gmail.com</p>
-  </footer>
+<!-- ================= CITATION ================= -->
+<section class="py-24 reveal">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-3xl font-bold mb-6 text-white">How to Cite</h2>
+
+    <p class="text-gray-300 mb-4 max-w-3xl">
+      Please cite this work if you use the tool or reference it in your research:
+    </p>
+
+    <div class="bg-black/40 rounded-xl p-6 text-sm font-mono text-gray-200 leading-relaxed">
+<pre>
+Uddin, A. I., Ma, X., Ni, C. (2026). 
+Improving Multicontrast Arterial Centerline Alignment Between TOF and SNAP MRI 
+Using Landmark-Based Affine Transformations. 
+Proceedings of the International Society for Magnetic Resonance in Medicine (ISMRM), 
+Abstract #00541. 
+University of Utah, Department of Radiology and Imaging Sciences.
+</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="py-10 text-center text-sm text-gray-400 border-t border-white/10">
+  <p>© 2026 Abrar I. Uddin · Karl G. Maeser Preparatory Academy · University of Utah</p>
+  <p class="mt-2">Contact: abrarihtiram@gmail.com | 385-472-9574</p>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Figure mouse-following subtle glow
+  const figure = document.querySelector('.figure-card');
+  const glow = figure.querySelector('::before'); // pseudo-element handled in JS via transform
+
+  figure.addEventListener('mousemove', e => {
+    const rect = figure.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const px = x / rect.width - 0.5;
+    const py = y / rect.height - 0.5;
+    figure.style.setProperty('--glow-x', `${px*100}px`);
+    figure.style.setProperty('--glow-y', `${py*100}px`);
+    figure.querySelector('::before')?.style?.setProperty('transform', `translate(${px*50}px, ${py*50}px)`);
+  });
+</script>
 
 </body>
 </html>
