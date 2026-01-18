@@ -54,21 +54,6 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
 
-    .figure-card::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%);
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-      border-radius: 50%;
-      z-index: 0;
-    }
-
     .figure-card img {
       position: relative;
       z-index: 1;
@@ -86,31 +71,24 @@
 
     /* Modal for flowchart */
     #flowchartModal {
-      transition: opacity 0.25s ease;
+      transition: opacity 0.3s ease;
     }
 
-    #flowchartModal.show {
-      opacity: 1;
+    #flowchartModal img {
+      cursor: default;
+      transition: transform 0.3s ease;
     }
 
-    /* Glow for modal */
-    #flowchartModal::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(56,189,248,0.25) 0%, transparent 70%);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      transition: transform 0.15s ease;
-      z-index: 10;
+    /* Citation box scrollable on mobile */
+    .citation-box {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .reveal, .btn-lift, .media-icon, .figure-card, .figure-card img, .figure-card::before, #flowchartModal, #flowchartModal::before {
+      .reveal, .btn-lift, .media-icon, .figure-card, .figure-card img, #flowchartModal {
         animation: none !important;
         transition: none !important;
       }
@@ -315,7 +293,7 @@ Output:
       Please cite this work if you use the tool or reference it in your research:
     </p>
 
-    <div class="bg-black/40 rounded-xl p-6 text-sm font-mono text-gray-200 leading-relaxed overflow-x-auto break-words">
+    <div class="bg-black/40 rounded-xl p-6 text-sm font-mono text-gray-200 leading-relaxed citation-box">
 <pre>
 Uddin, A. I., Ma, X., Ni, C. (2026). 
 Improving Multicontrast Arterial Centerline Alignment Between TOF and SNAP MRI 
@@ -337,7 +315,7 @@ University of Utah, Department of Radiology and Imaging Sciences.
 <!-- ================= FLOWCHART MODAL ================= -->
 <div id="flowchartModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
   <span id="modalClose" class="absolute top-5 right-8 text-white text-3xl cursor-pointer">&times;</span>
-  <img id="modalImage" src="" alt="Enlarged Flowchart" class="max-h-[90vh] max-w-[90vw] rounded-xl shadow-xl transform scale-90 transition-transform duration-300">
+  <img id="modalImage" src="" alt="Enlarged Flowchart" class="max-h-[90vh] max-w-[90vw] rounded-xl shadow-xl transform scale-75 transition-transform duration-300">
 </div>
 
 <script>
@@ -345,14 +323,12 @@ University of Utah, Department of Radiology and Imaging Sciences.
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
+      if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   }, { threshold: 0.15 });
   reveals.forEach(r => observer.observe(r));
 
-  // Flowchart modal logic
+  // Flowchart modal logic with smooth zoom
   const flowchartImg = document.querySelector('.flowchart-img');
   const modal = document.getElementById('flowchartModal');
   const modalImg = document.getElementById('modalImage');
@@ -361,35 +337,19 @@ University of Utah, Department of Radiology and Imaging Sciences.
   flowchartImg.addEventListener('click', () => {
     modalImg.src = flowchartImg.src;
     modal.classList.remove('pointer-events-none');
-    modal.classList.add('show');
     modal.style.opacity = '1';
-    modalImg.classList.remove('scale-90');
-    modalImg.classList.add('scale-100');
+    modalImg.style.transform = 'scale(1)';
   });
 
   const closeModal = () => {
     modal.style.opacity = '0';
     modal.classList.add('pointer-events-none');
-    modal.classList.remove('show');
-    modalImg.classList.remove('scale-100');
-    modalImg.classList.add('scale-90');
+    modalImg.style.transform = 'scale(0.75)';
   }
 
   modalClose.addEventListener('click', closeModal);
   modal.addEventListener('click', e => {
     if (e.target === modal) closeModal();
-  });
-
-  // Mouse-follow glow inside modal
-  modal.addEventListener('mousemove', e => {
-    const rect = modal.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const glow = modal.querySelector('::before');
-    const px = (x / rect.width - 0.5) * 100;
-    const py = (y / rect.height - 0.5) * 100;
-    modal.style.setProperty('--glow-x', `${px}px`);
-    modal.style.setProperty('--glow-y', `${py}px`);
   });
 </script>
 
